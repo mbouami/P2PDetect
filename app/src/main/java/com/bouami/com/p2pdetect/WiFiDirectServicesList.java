@@ -3,8 +3,10 @@ package com.bouami.com.p2pdetect;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +23,13 @@ import java.util.List;
 
 public class WiFiDirectServicesList extends ListFragment {
 
+    public static final String TAG = "WiFiDirectServicesList";
     WiFiDevicesAdapter listAdapter = null;
 
     interface DeviceClickListener {
         public void connectP2p(WiFiP2pService wifiP2pService);
+
+        void onConnectionInfoAvailable(WifiP2pInfo p2pInfo);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,9 +47,8 @@ public class WiFiDirectServicesList extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         // TODO Auto-generated method stub
-        ((DeviceClickListener) getActivity()).connectP2p((WiFiP2pService) l
-                .getItemAtPosition(position));
-        ((TextView) v.findViewById(android.R.id.text2)).setText("Connecting");
+        ((DeviceClickListener) getActivity()).connectP2p((WiFiP2pService) l.getItemAtPosition(position));
+        ((TextView) v.findViewById(android.R.id.text2)).setText("Connecté ...");
     }
 
     public class WiFiDevicesAdapter extends ArrayAdapter<WiFiP2pService> {
@@ -79,17 +83,17 @@ public class WiFiDirectServicesList extends ListFragment {
     public static String getDeviceStatus(int statusCode) {
         switch (statusCode) {
             case WifiP2pDevice.CONNECTED:
-                return "Connected";
+                return "Connecté";
             case WifiP2pDevice.INVITED:
-                return "Invited";
+                return "Invité";
             case WifiP2pDevice.FAILED:
-                return "Failed";
+                return "Erreur";
             case WifiP2pDevice.AVAILABLE:
-                return "Available";
+                return "Disponible";
             case WifiP2pDevice.UNAVAILABLE:
-                return "Unavailable";
+                return "Indisponible";
             default:
-                return "Unknown";
+                return "Unconnu";
         }
     }
 }
