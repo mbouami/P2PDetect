@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private WiFiChatFragment chatFragment;
     private WiFiDirectServicesList servicesList = null;
     private TextView statusTxtView;
+    final HashMap<String, String> buddies = new HashMap<String, String>();
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -72,11 +73,11 @@ public class MainActivity extends AppCompatActivity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
-        mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
-        ChetcherVoisin();
-//        startRegistration();
-        startRegistrationAndDiscovery();
-        servicesList = new WiFiDirectServicesList(mReceiver.getPeersService());
+//        mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
+//        ChetcherVoisin();
+        startRegistration();
+//        startRegistrationAndDiscovery();
+        servicesList = new WiFiDirectServicesList();
 //        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //        transaction.add(R.id.container_root,new WiFiDirectServicesList(),"services").commit();
         getSupportFragmentManager().beginTransaction().add(R.id.container_root, servicesList, "services").commit();
@@ -259,38 +260,48 @@ public class MainActivity extends AppCompatActivity {
          */
         WifiP2pManager.DnsSdTxtRecordListener txtListener = new WifiP2pManager.DnsSdTxtRecordListener() {
             @Override
-            public void onDnsSdTxtRecordAvailable(
-                    String fullDomain, Map record, WifiP2pDevice device) {
+            public void onDnsSdTxtRecordAvailable(String fullDomain, Map record, WifiP2pDevice device) {
                 Log.d(TAG, "DnsSdTxtRecord available -" + record.toString());
-//                buddies.put(device.deviceAddress, record.get("buddyname"));
+                buddies.put(device.deviceAddress, (String) record.get("buddyname"));
                 appendStatus("DnsSdTxtRecord available -" + record.toString());
             }
         };
         WifiP2pManager.DnsSdServiceResponseListener servListener = new WifiP2pManager.DnsSdServiceResponseListener() {
             @Override
-            public void onDnsSdServiceAvailable(String instanceName, String registrationType,
-                                                WifiP2pDevice resourceType) {
+            public void onDnsSdServiceAvailable(String instanceName, String registrationType,WifiP2pDevice resourceType) {
 
                 // Update the device name with the human-friendly version from
                 // the DnsTxtRecord, assuming one arrived.
                         appendStatus("instanceName :"+instanceName);
+                // Update the device name with the human-friendly version from
+                // the DnsTxtRecord, assuming one arrived.
+//                resourceType.deviceName = buddies
+//                        .containsKey(resourceType.deviceAddress) ? buddies
+//                        .get(resourceType.deviceAddress) : resourceType.deviceName;
+//
+//                // Add to the custom adapter defined specifically for showing
+//                // wifi devices.
+//                WiFiDirectServicesList fragment = (WiFiDirectServicesList) getFragmentManager().findFragmentById(R.id.frag_peerlist);
+//                WiFiDevicesAdapter adapter = ((WiFiDevicesAdapter) fragment.getListAdapter());
+//
+//                adapter.add(resourceType);
+//                adapter.notifyDataSetChanged();
+//                Log.d(TAG, "onBonjourServiceAvailable " + instanceName);
+
                         if (instanceName.equalsIgnoreCase(SERVICE_INSTANCE)) {
                             // update the UI and add the item the discovered
                             // device.
-                            WiFiDirectServicesList fragment = (WiFiDirectServicesList) getSupportFragmentManager()
-                                    .findFragmentByTag("services");
+                            WiFiDirectServicesList fragment = (WiFiDirectServicesList) getSupportFragmentManager().findFragmentByTag("services");
                             appendStatus(""+(fragment!=null));
                             if (fragment != null) {
-                                WiFiDevicesAdapter adapter = ((WiFiDevicesAdapter) fragment
-                                        .getListAdapter());
+                                WiFiDevicesAdapter adapter = ((WiFiDevicesAdapter) fragment.getListAdapter());
                                 WiFiP2pService service = new WiFiP2pService();
                                 service.device = resourceType;
                                 service.instanceName = instanceName;
                                 service.serviceRegistrationType = registrationType;
                                 adapter.add(service);
                                 adapter.notifyDataSetChanged();
-                                Log.d(TAG, "onBonjourServiceAvailable "
-                                        + instanceName);
+                                Log.d(TAG, "onBonjourServiceAvailable "+ instanceName);
                             }
                         }
             }

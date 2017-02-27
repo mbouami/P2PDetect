@@ -22,12 +22,6 @@ import java.util.List;
 public class WiFiDirectServicesList extends ListFragment {
 
     WiFiDevicesAdapter listAdapter = null;
-    private List<WiFiP2pService> mPeers;
-
-    @SuppressLint("ValidFragment")
-    public WiFiDirectServicesList(List<WiFiP2pService> peers) {
-        mPeers = peers;
-    }
 
     interface DeviceClickListener {
         public void connectP2p(WiFiP2pService wifiP2pService);
@@ -42,7 +36,7 @@ public class WiFiDirectServicesList extends ListFragment {
         super.onActivityCreated(savedInstanceState);
         listAdapter = new WiFiDevicesAdapter(this.getActivity(),
                 android.R.layout.simple_list_item_2, android.R.id.text1,
-                mPeers);
+                new ArrayList<WiFiP2pService>());
         setListAdapter(listAdapter);
     }
     @Override
@@ -70,13 +64,11 @@ public class WiFiDirectServicesList extends ListFragment {
             }
             WiFiP2pService service = items.get(position);
             if (service != null) {
-                TextView nameText = (TextView) v
-                        .findViewById(android.R.id.text1);
+                TextView nameText = (TextView) v.findViewById(android.R.id.text1);
                 if (nameText != null) {
                     nameText.setText(service.device.deviceName + " - " + service.instanceName);
                 }
-                TextView statusText = (TextView) v
-                        .findViewById(android.R.id.text2);
+                TextView statusText = (TextView) v.findViewById(android.R.id.text2);
                 statusText.setText(getDeviceStatus(service.device.status));
             }
             return v;
