@@ -27,7 +27,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private Activity activity;
     private WifiP2pManager.PeerListListener myPeerListListener;
     private List<WifiP2pDevice> peers;
-    private List<WiFiP2pService> mPeersService;
     /**
      * @param manager WifiP2pManager system service
      * @param channel Wifi p2p mChannel
@@ -39,71 +38,57 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         this.mManager = manager;
         this.mChannel = channel;
         this.activity = activity;
-        myPeerListListener = new WifiP2pManager.PeerListListener() {
-            @Override
-            public void onPeersAvailable(WifiP2pDeviceList peerList) {
-
-                Collection<WifiP2pDevice> refreshedPeers = (Collection<WifiP2pDevice>) peerList.getDeviceList();
-                if (!refreshedPeers.equals(peers)) {
-                    peers.clear();
-                    peers.addAll(refreshedPeers);
-                    mPeersService.clear();
-                    int i=0;
-                    for (WifiP2pDevice  device : peers) {
-                        Log.d(MainActivity.TAG, "WifiP2pDevice : "+device.deviceName+"---"+device.deviceAddress);
-                        WiFiP2pService service = new WiFiP2pService();
-                        service.device = device;
-                        service.instanceName = device.deviceName;
-                        service.serviceRegistrationType = device.primaryDeviceType;
-                        mPeersService.set(i++,service);
-                    }
-                    if (peers.size() > 0) {
-                        connect(peers.get(0));
-                    }
-                    // If an AdapterView is backed by this data, notify it
-                    // of the change.  For instance, if you have a ListView of
-                    // available peers, trigger an update.
-//                    ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
-
-                    // Perform any other updates needed based on the new list of
-                    // peers connected to the Wi-Fi P2P network.
-                }
-
-                if (peers.size() == 0) {
-                    Log.d(MainActivity.TAG, "No devices found");
-                    return;
-                }
-            }
-
-
-        };
-    }
-
-    public List<WiFiP2pService> getPeersService(){
-        return mPeersService;
-    }
-
-    public void connect(WifiP2pDevice device) {
-        // Picking the first device found on the network.
-
-        WifiP2pDevice mDevice = device;
-        WifiP2pConfig config = new WifiP2pConfig();
-        config.deviceAddress = mDevice.deviceAddress;
-        config.wps.setup = WpsInfo.PBC;
-
-        mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
-
-            @Override
-            public void onSuccess() {
-                // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
-            }
-
-            @Override
-            public void onFailure(int reason) {
-                Log.d(MainActivity.TAG, "Connect failed. Retry.");
-            }
-        });
-    }
+//        myPeerListListener = new WifiP2pManager.PeerListListener() {
+//            @Override
+//            public void onPeersAvailable(WifiP2pDeviceList peerList) {
+//
+//                Collection<WifiP2pDevice> refreshedPeers = (Collection<WifiP2pDevice>) peerList.getDeviceList();
+//                if (!refreshedPeers.equals(peers)) {
+//                    peers.clear();
+//                    peers.addAll(refreshedPeers);
+//                    if (peers.size() > 0) {
+//                        connect(peers.get(0));
+//                    }
+//                    // If an AdapterView is backed by this data, notify it
+//                    // of the change.  For instance, if you have a ListView of
+//                    // available peers, trigger an update.
+////                    ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
+//
+//                    // Perform any other updates needed based on the new list of
+//                    // peers connected to the Wi-Fi P2P network.
+//                }
+//
+//                if (peers.size() == 0) {
+//                    Log.d(MainActivity.TAG, "No devices found");
+//                    return;
+//                }
+//            }
+//
+//
+//        };
+   }
+//
+//    public void connect(WifiP2pDevice device) {
+//        // Picking the first device found on the network.
+//
+//        WifiP2pDevice mDevice = device;
+//        WifiP2pConfig config = new WifiP2pConfig();
+//        config.deviceAddress = mDevice.deviceAddress;
+//        config.wps.setup = WpsInfo.PBC;
+//
+//        mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+//
+//            @Override
+//            public void onSuccess() {
+//                // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
+//            }
+//
+//            @Override
+//            public void onFailure(int reason) {
+//                Log.d(MainActivity.TAG, "Connect failed. Retry.");
+//            }
+//        });
+//    }
     /*
      * (non-Javadoc)
      * @see android.content.BroadcastReceiver#onReceive(android.content.Context,
@@ -126,18 +111,16 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             if (mManager == null) {
                 return;
             }
-            NetworkInfo networkInfo = (NetworkInfo) intent
-                    .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+            NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
             if (networkInfo.isConnected()) {
                 // we are connected with the other device, request connection
                 // info to find group owner IP
                 Log.d(MainActivity.TAG,"Connected to p2p network. Requesting network details");
-//                mManager.requestConnectionInfo(mChannel,(WifiP2pManager.ConnectionInfoListener) activity);
+                mManager.requestConnectionInfo(mChannel,(WifiP2pManager.ConnectionInfoListener) activity);
             } else {
                 // It's a disconnect
             }
-        } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION
-                .equals(action)) {
+        } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             WifiP2pDevice device = (WifiP2pDevice) intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
             Log.d(MainActivity.TAG, "Device status -" + device.status);
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
