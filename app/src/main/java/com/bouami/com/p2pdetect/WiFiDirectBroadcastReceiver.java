@@ -82,6 +82,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     public List<WiFiP2pService> getPeersService(){
         return mPeersService;
     }
+
     public void connect(WifiP2pDevice device) {
         // Picking the first device found on the network.
 
