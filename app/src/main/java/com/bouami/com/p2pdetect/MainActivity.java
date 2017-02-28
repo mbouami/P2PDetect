@@ -299,8 +299,7 @@ public class MainActivity extends AppCompatActivity implements DeviceClickListen
         if (p2pInfo.isGroupOwner) {
             Log.d(TAG, "Connected as group owner");
             try {
-                handler = new GroupOwnerSocketHandler(
-                        ((WiFiChatFragment.MessageTarget) this).getHandler());
+                handler = new GroupOwnerSocketHandler(((WiFiChatFragment.MessageTarget) this).getHandler());
                 handler.start();
             } catch (IOException e) {
                 Log.d(TAG,

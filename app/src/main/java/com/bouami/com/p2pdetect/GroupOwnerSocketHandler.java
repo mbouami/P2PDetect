@@ -17,6 +17,7 @@ public class GroupOwnerSocketHandler extends Thread {
     private final int THREAD_COUNT = 10;
     private Handler handler;
     private static final String TAG = "GroupOwnerSocketHandler";
+
     public GroupOwnerSocketHandler(Handler handler) throws IOException {
         try {
             socket = new ServerSocket(4545);
@@ -31,9 +32,8 @@ public class GroupOwnerSocketHandler extends Thread {
     /**
      * A ThreadPool for client sockets.
      */
-    private final ThreadPoolExecutor pool = new ThreadPoolExecutor(
-            THREAD_COUNT, THREAD_COUNT, 10, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<Runnable>());
+    private final ThreadPoolExecutor pool = new ThreadPoolExecutor(THREAD_COUNT, THREAD_COUNT, 10, TimeUnit.SECONDS,new LinkedBlockingQueue<Runnable>());
+
     @Override
     public void run() {
         while (true) {

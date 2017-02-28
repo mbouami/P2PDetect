@@ -25,22 +25,22 @@ public class WiFiChatFragment extends Fragment {
     private ListView listView;
     ChatMessageAdapter adapter = null;
     private List<String> items = new ArrayList<String>();
+
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+
         view = inflater.inflate(R.layout.fragment_chat, container, false);
         chatLine = (TextView) view.findViewById(R.id.txtChatLine);
         listView = (ListView) view.findViewById(android.R.id.list);
-        adapter = new ChatMessageAdapter(getActivity(), android.R.id.text1,
-                items);
+        adapter = new ChatMessageAdapter(getActivity(), android.R.id.text1,items);
         listView.setAdapter(adapter);
         view.findViewById(R.id.button1).setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View arg0) {
                         if (chatManager != null) {
-                            chatManager.write(chatLine.getText().toString()
-                                    .getBytes());
+                            chatManager.write(chatLine.getText().toString().getBytes());
                             pushMessage("Me: " + chatLine.getText().toString());
                             chatLine.setText("");
                             chatLine.clearFocus();
@@ -49,12 +49,15 @@ public class WiFiChatFragment extends Fragment {
                 });
         return view;
     }
+
     public interface MessageTarget {
         public android.os.Handler getHandler();
     }
+
     public void setChatManager(ChatManager obj) {
         chatManager = obj;
     }
+
     public void pushMessage(String readMessage) {
         adapter.add(readMessage);
         adapter.notifyDataSetChanged();
@@ -78,16 +81,13 @@ public class WiFiChatFragment extends Fragment {
             }
             String message = items.get(position);
             if (message != null && !message.isEmpty()) {
-                TextView nameText = (TextView) v
-                        .findViewById(android.R.id.text1);
+                TextView nameText = (TextView) v.findViewById(android.R.id.text1);
                 if (nameText != null) {
                     nameText.setText(message);
                     if (message.startsWith("Me: ")) {
-                        nameText.setTextAppearance(getActivity(),
-                                R.style.normalText);
+                        nameText.setTextAppearance(getActivity(),R.style.normalText);
                     } else {
-                        nameText.setTextAppearance(getActivity(),
-                                R.style.boldText);
+                        nameText.setTextAppearance(getActivity(),R.style.boldText);
                     }
                 }
             }

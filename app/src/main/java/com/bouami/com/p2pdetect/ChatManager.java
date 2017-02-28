@@ -15,6 +15,7 @@ public class ChatManager implements Runnable {
 
     private Socket socket = null;
     private Handler handler;
+
     public ChatManager(Socket socket, Handler handler) {
         this.socket = socket;
         this.handler = handler;
@@ -22,6 +23,7 @@ public class ChatManager implements Runnable {
     private InputStream iStream;
     private OutputStream oStream;
     private static final String TAG = "ChatHandler";
+
     @Override
     public void run() {
         try {
@@ -29,8 +31,7 @@ public class ChatManager implements Runnable {
             oStream = socket.getOutputStream();
             byte[] buffer = new byte[1024];
             int bytes;
-            handler.obtainMessage(MainActivity.MY_HANDLE, this)
-                    .sendToTarget();
+            handler.obtainMessage(MainActivity.MY_HANDLE, this).sendToTarget();
             while (true) {
                 try {
                     // Read from the InputStream
@@ -40,8 +41,7 @@ public class ChatManager implements Runnable {
                     }
                     // Send the obtained bytes to the UI Activity
                     Log.d(TAG, "Rec:" + String.valueOf(buffer));
-                    handler.obtainMessage(MainActivity.MESSAGE_READ,
-                            bytes, -1, buffer).sendToTarget();
+                    handler.obtainMessage(MainActivity.MESSAGE_READ,bytes, -1, buffer).sendToTarget();
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
                 }
